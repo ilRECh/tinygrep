@@ -1,19 +1,8 @@
-#pragma once
+#include <iostream>
 
-#include <string>
+#include "finder.hpp"
 
-class Finder
+Finder::Finder(std::string pattern) throw()
 {
-    private:
-    
-        Finder();
-    
-    public:
-
-        /**
-         * @brief Construct a new Finder object
-         * 
-         * @param pattern basic regex pattern to examine
-         */
-        Finder(std::string pattern) throw();
-};
+    std::cout << "Examine pattern: " << pattern << std::endl;
+}
