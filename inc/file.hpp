@@ -2,15 +2,27 @@
 
 #include <string>
 #include <fstream>
+#include <filesystem>
 
+/**
+ * @brief Contains the current file information
+ * 
+ */
 class File
 {
     private:
 
+        File();
+
         /**
-         * @brief A file with contents
+         * @brief The iterator to the element currently in use
          */
-        std::ifstream m_file;
+        std::filesystem::recursive_directory_iterator m_item;
+
+        /**
+         * @brief The current path in progress
+         */
+        const std::filesystem::path * m_current_path;
 
     public:
 
@@ -19,8 +31,17 @@ class File
          * 
          * @param file_path the file path to examine
          * 
-         * @return false - no issues
-         *         true - something wrong with the file path
+         * @throw std::filesystem::filesystem_error
          */
-        bool open_path(std::string file_path) noexcept;
+        File(std::string file_path) noexcept(false);
+
+        /**
+         * @brief Get the next file to search in
+         * 
+         * @param[out] file_to_search std::ifstream next file to search in
+         * 
+         * @return true - there is a file to search in
+         *         false - no more files left
+         */
+        bool next(std::ifstream &file_to_search) noexcept(false);
 };

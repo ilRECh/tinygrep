@@ -8,7 +8,9 @@ grep -r '<pattern>' '<directory_or_file>'
 ```
 
 ## Tech stack
-- C++11
+- C++17
+    - since C++11 - std::regex 
+    - since C++17 - std::filesystem
 - CMake
 - Linux (debian based)
 
@@ -19,10 +21,10 @@ grep -r '<pattern>' '<directory_or_file>'
     - [TinyGrep](#TinyGrep)
 
 ### File
-Contains current file information. In Unix OS' "everything is a file", so this is a class, which abstracts this statement, and makes that it contains an "actual" file with contents.
+Contains the current file's information. In Unix OS' "everything is a file", so this is a class, which abstracts this statement, and makes that it contains an "actual" file with contents.
 
 ### Finder
-Contains searching functionality. Addresses the [File](#File) class for the file to search in.
+Contains the searching functionality. Addresses the [File](#File) class for the file to search in.
 
 ### TinyGrep
 The main class.
