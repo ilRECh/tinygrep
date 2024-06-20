@@ -23,14 +23,12 @@ class TinyGrep
 
     public:
         /**
-         * @brief Construct a new Tiny Grep object
+         * @brief Construct a new TinyGrep object
          * 
-         * @param pattern searching basic regex pattern
-         * @param file file path to search in
-         * 
-         * @throw empty exception in case if member initialization failed 
+         * @param pattern the basic regex pattern to match with
+         * @param file_path the file path to search in
          */
-        TinyGrep(std::string pattern, std::string file) noexcept(false);
+        TinyGrep(std::string pattern, std::string file_path) noexcept;
 
         /**
          * @brief Run the search

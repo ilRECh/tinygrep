@@ -7,8 +7,6 @@ class Finder
 {
     private:
     
-        Finder();
-
         /**
          * @brief The basic regex pattern
          */
@@ -17,9 +15,12 @@ class Finder
     public:
 
         /**
-         * @brief Construct a new Finder object
+         * @brief Set the pattern
          * 
          * @param pattern basic regex pattern to examine
+         * 
+         * @return false - no issues
+         *         true - pattern examination failed
          */
-        Finder(std::string pattern) noexcept(false);
+        bool set_pattern(std::string pattern) noexcept;
 };

@@ -2,8 +2,6 @@
 
 #include "tinygrep.hpp"
 
-#define EXIT_OK 0
-#define EXIT_ERR 1
 #define EXACT_NUMBER_OF_ARGS 3
 
 /**
@@ -20,22 +18,9 @@ int main(int argc, char **argv)
     if(argc != EXACT_NUMBER_OF_ARGS)
     {
         usage();
-        return EXIT_ERR;
+        return EXIT_FAILURE;
     }
-    else
-    {
-        int status = EXIT_OK;
 
-        try
-        {
-            TinyGrep grep(*(argv + 1), *(argv + 2));
-            grep.run();
-        }
-        catch(...)
-        {
-            status = EXIT_ERR;
-        }
-
-        return status;
-    }
+    TinyGrep grep(*(argv + 1), *(argv + 2));
+    return grep.run();
 }

@@ -2,7 +2,13 @@
 
 #include "file.hpp"
 
-File::File(std::string file) noexcept(false)
+bool File::open_path(std::string file_path) noexcept
 {
-    std::cout << "Looking at the file: " << file << std::endl; 
+    try {
+        m_file.open(file_path);
+    } catch(...) {
+        std::cerr << "Something wrong with the file" << std::endl;
+    }
+
+    return false;
 }
