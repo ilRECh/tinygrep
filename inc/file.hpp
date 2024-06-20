@@ -15,5 +15,5 @@ class File
          * 
          * @param file file path to examine
          */
-        File(std::string file) throw();
+        File(std::string file) noexcept(false);
 };

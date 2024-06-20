@@ -2,7 +2,7 @@
 
 #include "file.hpp"
 
-File::File(std::string file) throw()
+File::File(std::string file) noexcept(false)
 {
-    std::cout << "Looking at: " << file << std::endl; 
+    std::cout << "Looking at the file: " << file << std::endl; 
 }

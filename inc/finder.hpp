@@ -1,12 +1,18 @@
 #pragma once
 
 #include <string>
+#include <regex>
 
 class Finder
 {
     private:
     
         Finder();
+
+        /**
+         * @brief The basic regex pattern
+         */
+        std::regex m_pattern;
     
     public:
 
@@ -15,5 +21,5 @@ class Finder
          * 
          * @param pattern basic regex pattern to examine
          */
-        Finder(std::string pattern) throw();
+        Finder(std::string pattern) noexcept(false);
 };

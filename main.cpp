@@ -2,6 +2,10 @@
 
 #include "tinygrep.hpp"
 
+#define EXIT_OK 0
+#define EXIT_ERR 1
+#define EXACT_NUMBER_OF_ARGS 3
+
 /**
  * @brief Print the program's usage to the standard output
  * 
@@ -13,14 +17,14 @@ static void usage(void)
 
 int main(int argc, char **argv)
 {
-    if(argc != 3)
+    if(argc != EXACT_NUMBER_OF_ARGS)
     {
         usage();
-        return 1;
+        return EXIT_ERR;
     }
     else
     {
-        int status = 0;
+        int status = EXIT_OK;
 
         try
         {
@@ -29,7 +33,7 @@ int main(int argc, char **argv)
         }
         catch(...)
         {
-            status = 1;
+            status = EXIT_ERR;
         }
 
         return status;

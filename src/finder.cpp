@@ -1,8 +1,8 @@
 #include <iostream>
+#include <regex>
 
 #include "finder.hpp"
 
-Finder::Finder(std::string pattern) throw()
-{
-    std::cout << "Examine pattern: " << pattern << std::endl;
-}
+Finder::Finder(std::string pattern) noexcept(false) :
+    m_pattern(pattern)
+{}

@@ -5,14 +5,12 @@
 TinyGrep::TinyGrep(
     std::string pattern,
     std::string file
-) throw() : 
+) noexcept(false) : 
     m_file(file),
     m_finder(pattern)
-{
+{}
 
-}
-
-void TinyGrep::run(void) throw()
+int TinyGrep::run(void) noexcept
 {
     
 }
