@@ -22,7 +22,7 @@ class File
         /**
          * @brief The current path in progress
          */
-        const std::filesystem::path * m_current_path;
+        std::string m_current_path;
 
     public:
 
@@ -44,4 +44,11 @@ class File
          *         false - no more files left
          */
         bool next(std::ifstream &file_to_search) noexcept(false);
+
+        /**
+         * @brief Get the path
+         * 
+         * @return std::string 
+         */
+        const std::string& get_path(void) const noexcept;
 };

@@ -35,5 +35,22 @@ The main class.
 
 ## How to run
 
+### Create a build directory
+```
+mkdir build
+cd build
+```
+
+### Run cmake and build the program
+```
+cmake
+make
+```
+
+### Run the program
+```
+./build/tinygrep <pattern> <directory_or_file>
+```
+
 ## Run tests
 

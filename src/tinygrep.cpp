@@ -14,12 +14,16 @@ void TinyGrep::run(void) noexcept
     std::ifstream file_to_search_in;
     std::string line;
 
-    while(m_file.next(file_to_search_in) && file_to_search_in.good())
+    while(m_file.next(file_to_search_in))
     {
+        const std::string& current_path = m_file.get_path();
+
         while(getline(file_to_search_in, line))
         {
-            std::cout << line << std::endl;
-            break;
+            if(m_finder.has_pattern(line))
+            {
+                std::cout << current_path << ":" << line << '\n';
+            }
         }
 
         file_to_search_in.close();
@@ -35,11 +39,6 @@ int TinyGrep::start(
         TinyGrep grep(pattern, file_path);
         grep.run();
     }
-    catch(std::filesystem::filesystem_error &e)
-    {
-        std::cerr << "tinygrep: " << e.what() << std::endl;
-        return EXIT_FAILURE + 1;
-    }
     catch(std::exception &e)
     {
         std::cerr << "tinygrep: " << e.what() << std::endl;
@@ -47,7 +46,7 @@ int TinyGrep::start(
     }
     catch(...)
     {
-        std::cerr << "Unknown error" << std::endl;
+        std::cerr << "tinygrep: Unknown error" << std::endl;
         return EXIT_FAILURE + 1;
     }
 
