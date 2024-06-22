@@ -45,11 +45,6 @@ class BaseQueue
          */
         std::condition_variable m_cv;
 
-        /**
-         * @brief Has the queue been updated? variable
-         */
-        bool m_updated;
-
     public:
 
         /**

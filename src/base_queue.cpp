@@ -3,12 +3,12 @@
 #include <iostream>
 
 #include "book.hpp"
+#include "sleuth.hpp"
 
 template<typename T>
 BaseQueue<T>::BaseQueue() :
     m_queue(),
-    m_is_growing(true),
-    m_updated(false)
+    m_is_growing(true)
 {}
 
 template<typename T>
@@ -16,7 +16,6 @@ void BaseQueue<T>::enqueue(BaseQueue<T>::BaseQueueElem elem)
 {
     std::lock_guard lock(m_queue_mutex);
 
-    m_updated = true;
     m_queue.push_back(elem);
 
     m_cv.notify_one();
@@ -29,9 +28,8 @@ void BaseQueue<T>::dequeue(
 ) {
     std::unique_lock<std::mutex> lock(m_queue_mutex);
 
-    m_cv.wait(lock, [this]{ return m_updated; } );
+    m_cv.wait(lock, [this]{ return !m_queue.empty() || !m_is_growing; } );
 
-    m_updated = false;
     is_growing = m_is_growing;
 
     if(!m_queue.empty())
@@ -47,10 +45,9 @@ void BaseQueue<T>::dequeue(
 ) {
     std::unique_lock<std::mutex> lock(m_queue_mutex);
 
-    m_cv.wait(lock, [this]{ return m_updated; } );
+    m_cv.wait(lock, [this]{ return !m_queue.empty() || !m_is_growing; } );
 
-    m_updated = false;
-    is_growing = m_is_growing;
+    is_growing = !m_queue.empty() || m_is_growing;
 
     if(!m_queue.empty())
     {
@@ -65,7 +62,6 @@ void BaseQueue<T>::set_finished(void) noexcept
     std::lock_guard lock(m_queue_mutex);
 
     m_is_growing = false;
-    m_updated = true;
 
-    m_cv.notify_one();
+    m_cv.notify_all();
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <fstream>
 #include <filesystem>
 
 /**
@@ -53,10 +52,13 @@ class File
         /**
          * @brief Get the next file to search in
          * 
-         * @param[out] file_to_search std::ifstream next file to search in
+         * @param[out] file_path file path to search in
+         * @param[out] is_to_give_filename we should print the filename,
+         *                                 only if the directory was specified
+         *                                 as the path argument
          * 
          * @return true - there is a file to search in
          *         false - no more files left
          */
-        bool next(std::ifstream &file_to_search, std::string& file_path) noexcept(false);
+        bool next(std::string& file_path, bool& is_to_give_filename) noexcept;
 };

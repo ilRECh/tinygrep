@@ -10,9 +10,12 @@ File::File(std::string file_path) noexcept(false) :
     if(fs::is_directory(m_current_file))
     {
         m_iter = fs::recursive_directory_iterator(m_current_file);
-        m_current_file.clear();
+        m_current_file = *m_iter;
 
-        goto_next_file();
+        while(!fs::is_regular_file(m_current_file))
+        {
+            goto_next_file();
+        }
     }
     else
     {
@@ -55,39 +58,18 @@ bool File::goto_next_file(void) noexcept
     return false;
 }
 
-bool File::next(std::ifstream &file_to_search_in, std::string& file_path) noexcept(false)
-{
+bool File::next(
+    std::string& file_path,
+    bool& is_to_give_filename
+) noexcept {
     if(m_current_file.empty())
     {
         return false;
     }
 
-    bool success = false;
+    is_to_give_filename = m_is_to_give_filename;
+    file_path = m_current_file.string();
+    goto_next_file();
 
-    while(!success)
-    {
-        file_to_search_in.open(m_current_file, std::ios_base::in);
-
-        if(file_to_search_in.good())
-        {
-            if(m_is_to_give_filename)
-            {
-                file_path = m_current_file.string() + ":";
-            }
-
-            success = true;
-            goto_next_file();
-        }
-        else
-        {
-            std::cerr << "tinygrep: " << m_current_file << ": Permission denied" << std::endl;
-
-            if(!goto_next_file())
-            {
-                break;
-            }
-        }
-    }
-
-    return success;
+    return true;
 }

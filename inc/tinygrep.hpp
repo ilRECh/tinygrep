@@ -1,11 +1,10 @@
 #pragma once
 
 #include <string>
-#include <regex>
 #include <memory>
 
 #include "file.hpp"
-#include "printer.hpp"
+#include "sleuth.hpp"
 
 /**
  * @brief Main class which provides grep functionality
@@ -34,20 +33,9 @@ class TinyGrep
         File m_file;
 
         /**
-         * @brief The basic regex pattern to search for
+         * @brief A sleuth, who searches for clues
          */
-        std::regex m_pattern;
-
-        /**
-         * @brief A Book with all the results to print, page by page
-         * 
-         */
-        std::shared_ptr<Book> m_book;
-
-        /**
-         * @brief A thread, which prints the book
-         */
-        Printer m_printer;
+        Sleuth m_sleuth;
 
     public:
         /**
