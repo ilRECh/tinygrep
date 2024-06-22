@@ -1,9 +1,11 @@
 #pragma once
 
 #include <string>
+#include <regex>
+#include <memory>
 
 #include "file.hpp"
-#include "finder.hpp"
+#include "printer.hpp"
 
 /**
  * @brief Main class which provides grep functionality
@@ -32,9 +34,20 @@ class TinyGrep
         File m_file;
 
         /**
-         * @brief The finder, which searches for patterns 
+         * @brief The basic regex pattern to search for
          */
-        Finder m_finder;
+        std::regex m_pattern;
+
+        /**
+         * @brief A Book with all the results to print, page by page
+         * 
+         */
+        std::shared_ptr<Book> m_book;
+
+        /**
+         * @brief A thread, which prints the book
+         */
+        Printer m_printer;
 
     public:
         /**

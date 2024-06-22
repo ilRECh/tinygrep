@@ -77,7 +77,12 @@ TINYGREP_RESULTS="TINYGREP_results.txt"
 > $STANDARD_GREP_RESULTS
 > $TINYGREP_RESULTS
 
-Test valid patterns with both grep utilities
+# Test just one simple file
+echo "Testing search in file directly"
+run_grep_test "$STANDARD_GREP" "main.o" "Makefile"
+run_grep_test "$TINYGREP" "main.o" "Makefile"
+
+# Test valid patterns with both grep utilities
 echo "Testing valid patterns."
 for pattern in "${valid_patterns[@]}"; do
     run_grep_test "$STANDARD_GREP" "$pattern" "$STANDARD_GREP_RESULTS"

@@ -6,28 +6,31 @@ TinyGrep::TinyGrep(
     std::string pattern,
     std::string file_path
 ) noexcept(false) : 
-    m_file(file_path), m_finder(pattern)
+    m_file(file_path),
+    m_pattern(pattern),
+    m_printer()
 {}
 
 void TinyGrep::run(void) noexcept
 {
     std::ifstream file_to_search_in;
+    std::string file_path;
     std::string line;
 
-    while(m_file.next(file_to_search_in))
-    {
-        const std::string& current_path = m_file.get_path();
+    // while(m_file.next(file_to_search_in, file_path))
+    // {
+    //     while(getline(file_to_search_in, line))
+    //     {
+    //         if(std::regex_search(line, m_pattern))
+    //         {
+    //             m_printer.m_page.add_line(std::cout, line);
+    //         }
+    //     }
 
-        while(getline(file_to_search_in, line))
-        {
-            if(m_finder.has_pattern(line))
-            {
-                std::cout << current_path << ":" << line << '\n';
-            }
-        }
+    //     file_to_search_in.close();
+    // }
 
-        file_to_search_in.close();
-    }
+    // m_printer.m_page.set_page_finished();
 }
 
 int TinyGrep::start(

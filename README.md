@@ -53,4 +53,7 @@ make
 ```
 
 ## Run tests
+```
+./test.sh
+```
 

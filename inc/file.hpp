@@ -15,14 +15,29 @@ class File
         File();
 
         /**
-         * @brief The iterator to the element currently in use
+         * @brief Current path
          */
-        std::filesystem::recursive_directory_iterator m_item;
+        std::filesystem::path m_current_file;
 
         /**
-         * @brief The current path in progress
+         * @brief Recursive iterator through directories
          */
-        std::string m_current_path;
+        std::filesystem::recursive_directory_iterator m_iter;
+
+        /**
+         * @brief Increases the iterator to the next available regular file
+         * 
+         * @return true  - there is next file available
+         * @return false - reached the end and found no file
+         */
+        bool goto_next_file(void) noexcept;
+
+        /**
+         * @brief The grep utility does not print the filename,
+         *        if the filename was passed instead of directory name
+         * 
+         */
+        bool m_is_to_give_filename;
 
     public:
 
@@ -43,12 +58,5 @@ class File
          * @return true - there is a file to search in
          *         false - no more files left
          */
-        bool next(std::ifstream &file_to_search) noexcept(false);
-
-        /**
-         * @brief Get the path
-         * 
-         * @return std::string 
-         */
-        const std::string& get_path(void) const noexcept;
+        bool next(std::ifstream &file_to_search, std::string& file_path) noexcept(false);
 };
