@@ -1,29 +1,24 @@
 #include "book.hpp"
 
-Book::Book() : BaseQueue(false)
+Book::Book() : BaseQueue()
 {}
 
-std::shared_ptr<Page> Book::add_page(void) noexcept
+Book::PagePtr Book::add_page(void) noexcept
 {
-    std::shared_ptr<Page> page(new Page);
+    Book::PagePtr page(new Page);
 
     enqueue(page);
 
     return page;
 }
 
-std::shared_ptr<Page> Book::get_page(bool& is_growing) noexcept
+Book::PagePtr Book::get_page(bool& is_growing) noexcept
 {
-    std::list<std::shared_ptr<Page>> page_list;
+    Book::PagePtr page{nullptr};
 
-    dequeue(page_list, is_growing);
+    dequeue(page, is_growing);
 
-    if(page_list.empty())
-    {
-        return nullptr;
-    }
-
-    return *page_list.begin();
+    return page;
 }
 
 void Book::set_book_finished(void) noexcept

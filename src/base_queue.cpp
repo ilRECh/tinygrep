@@ -5,15 +5,14 @@
 #include "book.hpp"
 
 template<typename T>
-BaseQueue<T>::BaseQueue(bool is_to_always_dequeue_max) :
+BaseQueue<T>::BaseQueue() :
     m_queue(),
     m_is_growing(true),
-    m_is_dequeueing_max(is_to_always_dequeue_max),
     m_updated(false)
 {}
 
 template<typename T>
-void BaseQueue<T>::enqueue(T elem)
+void BaseQueue<T>::enqueue(BaseQueue<T>::BaseQueueElem elem)
 {
     std::lock_guard lock(m_queue_mutex);
 
@@ -24,8 +23,10 @@ void BaseQueue<T>::enqueue(T elem)
 }
 
 template<typename T>
-void BaseQueue<T>::dequeue(std::list<T>& list, bool& is_growing)
-{
+void BaseQueue<T>::dequeue(
+    std::list<BaseQueue<T>::BaseQueueElem>& list, 
+    bool& is_growing
+) {
     std::unique_lock<std::mutex> lock(m_queue_mutex);
 
     m_cv.wait(lock, [this]{ return m_updated; } );
@@ -33,13 +34,28 @@ void BaseQueue<T>::dequeue(std::list<T>& list, bool& is_growing)
     m_updated = false;
     is_growing = m_is_growing;
 
-    if(m_is_dequeueing_max)
+    if(!m_queue.empty())
     {
         list.splice(list.begin(), m_queue, m_queue.begin(), m_queue.end());
     }
-    else
+}
+
+template<typename T>
+void BaseQueue<T>::dequeue(
+    BaseQueue<T>::BaseQueueElem& elem, 
+    bool& is_growing
+) {
+    std::unique_lock<std::mutex> lock(m_queue_mutex);
+
+    m_cv.wait(lock, [this]{ return m_updated; } );
+
+    m_updated = false;
+    is_growing = m_is_growing;
+
+    if(!m_queue.empty())
     {
-        list.splice(list.begin(), m_queue, m_queue.begin());
+        elem = *m_queue.begin();
+        m_queue.pop_front();
     }
 }
 

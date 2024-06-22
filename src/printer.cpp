@@ -1,6 +1,7 @@
 #include "printer.hpp"
 
-Printer::Printer() :
+Printer::Printer(std::shared_ptr<Book> book) :
+    m_book(book),
     m_printer_thread(&Printer::print_book, this)
 {}
 
@@ -31,7 +32,7 @@ void Printer::print_book(void) noexcept
 
                 for(auto &line : lines)
                 {
-                    line.stream << line.sentense << '\n';
+                    line->stream << line->sentense << '\n';
                 }
             }
         }

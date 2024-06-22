@@ -17,14 +17,15 @@ ensure_success() {
 # Paths to the standard and custom grep utilities
 STANDARD_GREP="grep -r --binary-files=text -e"
 TINYGREP="./tinygrep"
+BUILD_DIR="Release"
 
 # Build the TINYGREP program
-# Delete the build directory if exists
-ensure_success rm -rf build
-# Create the build directory
-ensure_success mkdir build
-# Enter the build directory, essentially the tests will run here
-ensure_success cd build
+# Delete the $BUILD_DIR directory if exists
+ensure_success rm -rf $BUILD_DIR
+# Create the $BUILD_DIR directory
+ensure_success mkdir $BUILD_DIR
+# Enter the $BUILD_DIR directory, essentially the tests will run here
+ensure_success cd $BUILD_DIR
 # Build the program
 ensure_success cmake ..
 ensure_success make

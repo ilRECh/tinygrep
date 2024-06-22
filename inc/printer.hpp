@@ -9,6 +9,8 @@ class Printer
 {
     private:
 
+        Printer();
+
         /**
          * @brief Shared book with pages to print
          */
@@ -29,7 +31,7 @@ class Printer
         /**
          * @brief Construct a new Printer object
          */
-        Printer();
+        Printer(std::shared_ptr<Book> book);
 
         /**
          * @brief Destroy the Printer object

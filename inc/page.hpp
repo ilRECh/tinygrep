@@ -8,6 +8,9 @@
 
 #include "base_queue.hpp"
 
+/**
+ * @brief A line to print
+ */
 struct Line
 {
     std::string sentense;
@@ -22,6 +25,11 @@ template class BaseQueue<Line>;
 class Page : private BaseQueue<Line>
 {
     public:
+
+        /**
+         * @brief Shared pointer typedef
+         */
+        typedef BaseQueue::BaseQueueElem LinePtr;
 
         /**
          * @brief Construct a new Page object
@@ -42,7 +50,7 @@ class Page : private BaseQueue<Line>
          * @param is_growing whether the page is growing
          * @return std::list<Line> current lines to print
          */
-        std::list<Line> get_lines(bool& is_growing) noexcept;
+        std::list<LinePtr> get_lines(bool& is_growing) noexcept;
 
         /**
          * @brief Mark the page as finished

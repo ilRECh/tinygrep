@@ -8,7 +8,8 @@ TinyGrep::TinyGrep(
 ) noexcept(false) : 
     m_file(file_path),
     m_pattern(pattern),
-    m_printer()
+    m_book(new Book),
+    m_printer(m_book)
 {}
 
 void TinyGrep::run(void) noexcept
@@ -17,20 +18,23 @@ void TinyGrep::run(void) noexcept
     std::string file_path;
     std::string line;
 
-    // while(m_file.next(file_to_search_in, file_path))
-    // {
-    //     while(getline(file_to_search_in, line))
-    //     {
-    //         if(std::regex_search(line, m_pattern))
-    //         {
-    //             m_printer.m_page.add_line(std::cout, line);
-    //         }
-    //     }
+    while(m_file.next(file_to_search_in, file_path))
+    {
+        auto page = m_book->add_page();
 
-    //     file_to_search_in.close();
-    // }
+        while(getline(file_to_search_in, line))
+        {
+            if(std::regex_search(line, m_pattern))
+            {
+                page->add_line(std::cout, line);
+            }
+        }
 
-    // m_printer.m_page.set_page_finished();
+        file_to_search_in.close();
+        page->set_page_finished();
+    }
+
+    m_book->set_book_finished();
 }
 
 int TinyGrep::start(

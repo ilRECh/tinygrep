@@ -5,11 +5,18 @@
 #include "base_queue.hpp"
 #include "page.hpp"
 
-template class BaseQueue<std::shared_ptr<Page>>;
+template class BaseQueue<Page>;
 
-class Book : private BaseQueue<std::shared_ptr<Page>>
+class Book : private BaseQueue<Page>
 {
     public:
+
+        /**
+         * @brief Shared pointer typedef
+         * 
+         */
+        typedef BaseQueue::BaseQueueElem PagePtr;
+
         /**
          * @brief Construct a new Book object
          */

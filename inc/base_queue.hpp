@@ -3,6 +3,7 @@
 #include <list>
 #include <thread>
 #include <mutex>
+#include <memory>
 #include <condition_variable>
 
 /**
@@ -13,8 +14,11 @@
 template<typename T>
 class BaseQueue
 {
+    public:
+
+        typedef std::shared_ptr<T> BaseQueueElem;
+
     private:
-        BaseQueue();
 
         /**
          * @brief queue with the data
@@ -23,7 +27,7 @@ class BaseQueue
          *          we care about taking from the front and adding to the end
          *          rather than about the random access
          */
-        std::list<T> m_queue;
+        std::list<BaseQueueElem> m_queue;
 
         /**
          * @brief the variable, which defines if the queue is growing
@@ -41,26 +45,17 @@ class BaseQueue
          */
         std::condition_variable m_cv;
 
-        bool m_updated;
-
-    protected:
-
         /**
-         * @brief Whether to take whole queue on dequeue
-         * 
-         * @see dequeue
+         * @brief Has the queue been updated? variable
          */
-        bool m_is_dequeueing_max;
+        bool m_updated;
 
     public:
 
         /**
          * @brief Construct a new Base Queue object
-         * 
-         * @param is_to_always_dequeue_max tells the queue whehter to always extract maximum
-         *                                 available elements, or one at a time
          */
-        BaseQueue(bool is_to_always_dequeue_max);
+        BaseQueue();
 
         /**
          * @brief Enqueue the next element
@@ -69,17 +64,27 @@ class BaseQueue
          * 
          * @param elem 
          */
-        void enqueue(T elem);
+        void enqueue(BaseQueueElem elem);
 
         /**
-         * @brief Dequeue the next element or a group of elements
+         * @brief Dequeue an available group of elements
          * 
          * @details Cannot be used with enqueue in the same thread
          * 
-         * @param[out] list
+         * @param[out] list of elements available
          * @param[out] is_growing
          */
-        void dequeue(std::list<T>& list, bool& is_growing);
+        void dequeue(std::list<BaseQueueElem>& list, bool& is_growing);
+
+        /**
+         * @brief Dequeue an available element
+         * 
+         * @details Cannot be used with enqueue in the same thread
+         * 
+         * @param[out] elem if available
+         * @param[out] is_growing
+         */
+        void dequeue(BaseQueueElem& elem, bool& is_growing);
 
         /**
          * @brief Mark the queue as finished as in there won't be any elements anymore

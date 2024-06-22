@@ -1,16 +1,18 @@
 #include "page.hpp"
 
-Page::Page() : BaseQueue(true)
+Page::Page() : BaseQueue()
 {}
 
-void Page::add_line(std::ostream& output_stream, const std::string& line) noexcept
+void Page::add_line(
+    std::ostream& output_stream,
+    const std::string& line) noexcept
 {
-    enqueue(Line {.sentense = line, .stream = output_stream} );
+    enqueue(Page::LinePtr(new Line {.sentense = line, .stream = output_stream}));
 }
 
-std::list<Line> Page::get_lines(bool& is_growing) noexcept
+std::list<Page::LinePtr> Page::get_lines(bool& is_growing) noexcept
 {
-    std::list<Line> lines;
+    std::list<Page::LinePtr> lines;
 
     dequeue(lines, is_growing);
 
