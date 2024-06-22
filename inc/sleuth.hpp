@@ -8,18 +8,12 @@
 #include "book.hpp"
 #include "printer.hpp"
 
-struct Hook
-{
-    bool is_to_show_path;
-    std::string path;
-};
-
-template class BaseQueue<Hook>;
+template class BaseQueue<std::string>;
 
 /**
  * @brief Thread pool of searchers
  */
-class Sleuth : private BaseQueue<Hook>
+class Sleuth : private BaseQueue<std::string>
 {
     private:
 
@@ -42,6 +36,11 @@ class Sleuth : private BaseQueue<Hook>
          * @brief A thread, which prints the book
          */
         Printer m_printer;
+
+        /**
+         * @brief Determines whether to show filename or not
+         */
+        bool m_is_to_show_filename;
 
         /**
          * @brief Searches the path for clues
@@ -76,9 +75,18 @@ class Sleuth : private BaseQueue<Hook>
          */
         void add_path(HookPtr path) noexcept;
 
+        void report_false_hook(std::string false_hook_directory_name) noexcept;
+
         /**
          * @brief When there is no more hooks to investigate for clues ->
          *        finish investigation
          */
         void set_investigation_finished(void) noexcept;
+
+        /**
+         * @brief Set the is to show filename bool variable
+         * 
+         * @param is_to_show
+         */
+        void set_is_to_show_filename(bool is_to_show) noexcept;
 };

@@ -14,7 +14,7 @@ BaseQueue<T>::BaseQueue() :
 template<typename T>
 void BaseQueue<T>::enqueue(BaseQueue<T>::BaseQueueElem elem)
 {
-    std::lock_guard lock(m_queue_mutex);
+    std::lock_guard<std::mutex> lock(m_queue_mutex);
 
     m_queue.push_back(elem);
 
@@ -59,7 +59,7 @@ void BaseQueue<T>::dequeue(
 template<typename T>
 void BaseQueue<T>::set_finished(void) noexcept
 {
-    std::lock_guard lock(m_queue_mutex);
+    std::lock_guard<std::mutex> lock(m_queue_mutex);
 
     m_is_growing = false;
 

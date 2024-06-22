@@ -20,14 +20,12 @@ TINYGREP="./tinygrep"
 BUILD_DIR="Release"
 
 # Build the TINYGREP program
-# Delete the $BUILD_DIR directory if exists
-ensure_success rm -rf $BUILD_DIR
 # Create the $BUILD_DIR directory
-ensure_success mkdir $BUILD_DIR
+ensure_success mkdir -p $BUILD_DIR
 # Enter the $BUILD_DIR directory, essentially the tests will run here
 ensure_success cd $BUILD_DIR
 # Build the program
-ensure_success cmake ..
+ensure_success cmake -DCMAKE_BUILD_TYPE=Release ..
 ensure_success make
 
 # Create a temporary directory for testing
@@ -97,7 +95,7 @@ for pattern in "${invalid_patterns[@]}"; do
     run_grep_test "$TINYGREP" "$pattern" "$TINYGREP_RESULTS"
 done
 
-echo The results for the $STANDARD_GREP in the $STANDARD_GREP_RESULTS and for the $TINYGREP in the $TINYGREP_RESULTS
+# echo The results for the \n ```$STANDARD_GREP\n```\n in the $STANDARD_GREP_RESULTS and for the $TINYGREP in the $TINYGREP_RESULTS
 
 # Compare the results
 diff $STANDARD_GREP_RESULTS $TINYGREP_RESULTS > diff_results.txt

@@ -3,11 +3,13 @@
 #include <string>
 #include <memory>
 
-#include "file.hpp"
+#include "path.hpp"
 #include "sleuth.hpp"
 
 /**
  * @brief Main class which provides grep functionality
+ * 
+ * @warning Only one instance of the class should exist
  */
 class TinyGrep
 {
@@ -30,7 +32,7 @@ class TinyGrep
         /**
          * @brief The current file to search in
          */
-        File m_file;
+        Path m_path;
 
         /**
          * @brief A sleuth, who searches for clues

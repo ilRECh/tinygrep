@@ -6,26 +6,26 @@ TinyGrep::TinyGrep(
     std::string pattern,
     std::string file_path
 ) noexcept(false) : 
-    m_file(file_path),
+    m_path(file_path),
     m_sleuth(pattern)
-{}
+{
+    //to show path only if its a directory
+    m_sleuth.set_is_to_show_filename(!m_path.get_is_starting_path_regfile());
+}
+
 
 void TinyGrep::run(void) noexcept
 {
-    bool is_to_give_filename = false;
-    std::string file_path;
-
-    while(m_file.next(file_path, is_to_give_filename))
-    {
-        m_sleuth.add_path(
-            Sleuth::HookPtr(
-                new Hook {
-                    .is_to_show_path = is_to_give_filename,
-                    .path = file_path
-                }
-            )
-        );
-    }
+    m_path.iterate(
+        Path::callback_func_t([this](const char * directory_name) {
+                m_sleuth.add_path(Sleuth::HookPtr(new std::string(directory_name)));
+            }
+        ),
+        Path::callback_func_t([this](const char * directory_name) {
+                m_sleuth.report_false_hook(directory_name);
+            }
+        )
+    );
 
     m_sleuth.set_investigation_finished();
 }
