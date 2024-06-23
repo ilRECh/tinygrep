@@ -50,8 +50,6 @@ class Path
          * @brief Construct a new Path object
          * 
          * @param file_path the Path path to examine
-         * 
-         * @throw std::filesystem::filesystem_error
          */
         Path(std::string file_path) noexcept;
 

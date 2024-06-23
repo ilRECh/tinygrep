@@ -60,7 +60,7 @@ class Sleuth : private BaseQueue<Hook>
         /**
          * @brief Construct a new Sleuth object with given number of threads
          *
-         * @param pattern the pattern to search for
+         * @param pattern the regex pattern to match against
          * @param num_threads number of threads
          */
         Sleuth(
@@ -81,6 +81,11 @@ class Sleuth : private BaseQueue<Hook>
          */
         void add_path(std::string& path) noexcept;
 
+        /**
+         * @brief Enqueue the error to print
+         * 
+         * @param false_hook_directory_name name of the directory, which caused the error
+         */
         void report_false_hook(std::string& false_hook_directory_name) noexcept;
 
         /**

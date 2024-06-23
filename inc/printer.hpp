@@ -30,6 +30,8 @@ class Printer
 
         /**
          * @brief Construct a new Printer object
+         * 
+         * @param book - the book shared with Sleuth
          */
         Printer(std::shared_ptr<Book> book);
 
