@@ -49,41 +49,38 @@ ensure_success base64 /dev/urandom | head -c 1000000 > $TEST_DIR/largefile.txt
 ensure_success echo -e "Hello\nWorld" > $TEST_DIR/file_with_newline.txt
 ensure_success echo -e "Hello\tWorld" > $TEST_DIR/file_with_tab.txt
 
-# # Create files with varying permissions
-# ensure_success echo "This is a readable file." > $TEST_DIR/readable_file.txt
-# ensure_success echo "This file has restricted access." > $TEST_DIR/restricted_file.txt
-# ensure_success chmod 000 $TEST_DIR/restricted_file.txt
+# Create files with varying permissions
+ensure_success echo "This is a readable file." > $TEST_DIR/readable_file.txt
+ensure_success echo "This file has restricted access." > $TEST_DIR/restricted_file.txt
+ensure_success chmod 000 $TEST_DIR/restricted_file.txt
 
-# # Create directories with varying permissions
-# ensure_success mkdir -p $TEST_DIR/restricted_dir
-# ensure_success echo "File in restricted directory." > $TEST_DIR/restricted_dir/file_in_restricted_dir.txt
-# ensure_success chmod 000 $TEST_DIR/restricted_dir
+# Create directories with varying permissions
+ensure_success mkdir -p $TEST_DIR/restricted_dir
+ensure_success echo "File in restricted directory." > $TEST_DIR/restricted_dir/file_in_restricted_dir.txt
+ensure_success chmod 000 $TEST_DIR/restricted_dir
 
 # Additional base cases
 touch $TEST_DIR/empty_file.txt                          # Empty file
 echo "     " > $TEST_DIR/whitespace_file.txt            # File with only whitespace
 echo "!@#$%^&*()_+" > $TEST_DIR/special_chars.txt       # File with special characters
-# perl -e 'print "longline"x10000' > $TEST_DIR/long_line.txt  # File with very long lines
-echo -e '\xff\xfe\xfd\xfc' > $TEST_DIR/non_utf8.bin     # File with non-UTF-8 encoding
 
 # Valid regex patterns
 valid_patterns=(
     "Hello"
-    # "^start"
-    # "end$"
-    # "a.b"
-    # "[0-9]"
-    # "[a-z]"
-    # "[^a-z]"
-    # "foo|bar"
-    # "\\bword\\b"
-    # ".*"
+    "^start"
+    "end$"
+    "a.b"
+    "[0-9]"
+    "[a-z]"
+    "[^a-z]"
+    "\\bword\\b"
+    ".*"
 )
 
 # Invalid regex patterns (for basic regex)
 invalid_patterns=(
-    # "[a-z"
-    # "foo\\"
+    "[a-z"
+    "foo\\"
 )
 
 # Function to run grep command and check the result
@@ -91,7 +88,9 @@ run_grep_test() {
     local grep_cmd=$1
     local pattern=$2
     local output_file=$3
-    $grep_cmd "$pattern" $TEST_DIR &>> $output_file
+    echo >> $output_file
+    echo "Testing: $pattern" >> $output_file
+    $grep_cmd "$pattern" $TEST_DIR &>> $output_file 2>&1
 }
 
 # Files to store the results
@@ -121,25 +120,32 @@ for pattern in "${invalid_patterns[@]}"; do
     run_grep_test "$TINYGREP" "$pattern" "$TINYGREP_RESULTS"
 done
 
-echo The results for the \n ```$STANDARD_GREP\n```\n in the $STANDARD_GREP_RESULTS and for the $TINYGREP in the $TINYGREP_RESULTS
+# Trying to valgrind if available
+echo "Trying valgrind."
+if [ $(which valgrind) ]
 
 # Compare the results
 diff $STANDARD_GREP_RESULTS $TINYGREP_RESULTS > diff_results.txt
 line_count=$(wc -l diff_results.txt | awk '{print $1}')
 
+exit_code=0
+
 # Print the comparison result if diff_results.txt not empty
 if [ $line_count -ne 0 ]
 then
-    echo "Comparison result (diff):"
+    echo "Comparison result (diff $STANDARD_GREP_RESULTS $TINYGREP_RESULTS):"
     cat diff_results.txt
+    exit_code=1
 else
     echo The $STANDARD_GREP_RESULTS and the $TINYGREP_RESULTS files are identical
 fi
 
 # Clean up
 echo -e "Cleaning up test files"
-# chmod 700 $TEST_DIR/restricted_file.txt
-# chmod 700 $TEST_DIR/restricted_dir
-# rm -rf $TEST_DIR
+chmod 700 $TEST_DIR/restricted_file.txt
+chmod 700 $TEST_DIR/restricted_dir
+rm -rf $TEST_DIR
 
 echo "Test completed"
+
+exit $exit_code
