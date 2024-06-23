@@ -2,54 +2,100 @@
 
 ## Description
 
-A grep-like utility written in C++ that does a recursive search of a given query in all files in a directory. Behaves like a
+A grep-like utility written in C++ that does a recursive search of a given query in all files in a directory.
+
+## Reasoning
+
+The [Description](#Description) section describes the whole task in general. But if one tries to run the `grep` utility with only two arguments and no options, the `grep` ingnores directories:
+
 ```
-grep -r '<pattern>' '<directory_or_file>'
+$> grep asdf ..      
+grep: ..: Is a directory
+```
+It is necessary to provide `-r` option to do a recursive "grepping". Also, by default, the `grep` ignores binary files. The tasks enforces "all files" rule though, which means the option `--binary-files=text` is necessary as well.
+
+In conclusion, TINYGREP mimics the behavior of a
+```
+grep -r --binary-files=text '<pattern>' '<directory_or_file>'
 ```
 
 ## Tech stack
-- C++17
-    - since C++11 - std::regex 
-    - since C++17 - std::filesystem
+- C++11
+    - std::regex - since C++11
+    - std::function
+    - std::thread
+    - std::list
+- C - because std::filesystem is not good enough
+    - #include <sys/stat.h>
+    - #include <dirent.h>
 - CMake
+- Make
 - Linux (debian based)
 
 ## Design
-- Classes
-    - [File](#File)
-    - [Finder](#Finder)
+- [Classes](#Classes)
+    - [BaseQueue](#BaseQueue)
+    - [Book](#Book)
+    - [Page](#Page)
+    - [Path](#Path)
+    - [Printer](#Printer)
+    - [Sleuth](#Sleuth)
     - [TinyGrep](#TinyGrep)
+- [Diagram](#Diagram)
 
-### File
-Contains the current file's information. In Unix OS' "everything is a file", so this is a class, which abstracts this statement, and makes that it contains an "actual" file with contents.
-
-### Finder
-Contains the searching functionality. Addresses the [File](#File) class for the file to search in.
+## Classes
 
 ### TinyGrep
-The main class.
+The main class of the program.
+
+### Path
+A class containing the directory iterator functionality. Uses the `std::funciton` for callbacks on discovery of the "regular" files / errors with the directory iteration.
+
+### Printer
+A class that has a `std::thread` for printing functionality. Uses the `Book` class as a document to print.
+
+### Sleuth
+A class that searches the "hooks" for the "clues", then writes the results to the `Book` class.
+
+### BaseQueue
+The thread-safe custom queue implementation made with the `std::list`. Uses the `std::mutex` with the `std::conditional_variable` to synchronize the queue access between threads using the queue.
+
+### Page
+
+#### Line struct
+A structure, which contains the information to print in the `std::string` format and the stream refrence to print that `string` to.
+
+#### Page class
+A BaseQueue containing `Line` objects. Used by the `Sleuth` class to store the `std::string` results. Can be printed only through the `Book` object.
+
+### Book
+A BaseQueue containing `Page` objects. Used by the `Sleuth` class to store the `Page`s with the results.
+
+## Diagram
+![](tinygrep.png "tinygrep")
 
 ## Features
-- Basic regex pattern is supported
+- Uses the Basic regex
 - Recursive search in directories
+- Thread pool (Sleuth)
 
 ## How to run
 
 ### Create a build directory
 ```
-mkdir build
-cd build
+mkdir Release
+cd Release
 ```
 
 ### Run cmake and build the program
 ```
-cmake
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
 
 ### Run the program
 ```
-./build/tinygrep <pattern> <directory_or_file>
+./tinygrep <pattern> <directory_or_file>
 ```
 
 ## Run tests
