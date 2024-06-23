@@ -20,14 +20,12 @@ grep -r --binary-files=text '<pattern>' '<directory_or_file>'
 ```
 
 ## Tech stack
-- C++11
+- C++17
+    - std::filesystem - since C++17
     - std::regex - since C++11
     - std::function
     - std::thread
     - std::list
-- C - because std::filesystem is not good enough
-    - #include <sys/stat.h>
-    - #include <dirent.h>
 - CMake
 - Make
 - Linux (debian based)
@@ -75,8 +73,8 @@ A BaseQueue containing `Page` objects. Used by the `Sleuth` class to store the `
 ![](tinygrep.png "tinygrep")
 
 ## Features
-- Uses the Basic regex
-- Recursive search in directories
+- Uses std::filesystem to recursively iterate through directories
+- Uses the Basic regex with std::regex
 - Thread pool (Sleuth)
 
 ## How to run
@@ -99,6 +97,9 @@ make
 ```
 
 ## Run tests
+It's only natural to test the project agains the real `grep` utility, specifically agains: `grep -r --binary-files=text` sh cmd.
+
+Run the tests:
 ```
 ./test.sh
 ```
