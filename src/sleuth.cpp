@@ -4,9 +4,9 @@
 #include <fstream>
 
 Sleuth::Sleuth(
-    std::string pattern,
-    size_t num_threads) :
-    m_pattern(pattern),
+    std::string& pattern,
+    size_t num_threads
+) : m_pattern(pattern),
     m_threads(),
     m_book(new Book),
     m_printer(m_book),
@@ -43,14 +43,12 @@ void Sleuth::search(void) noexcept
             break;
         }
 
-        auto page = m_book->add_page();
-
-        std::ifstream file_to_search_in(*hook, std::ios_base::in);
+        std::ifstream file_to_search_in(hook->path, std::ios_base::in);
 
         if(!file_to_search_in.good())
         {
-            page->add_line(std::cerr, "tinygrep: " + *hook + ": Permission denied");
-            page->set_page_finished();
+            hook->page->add_line(std::cerr, "tinygrep: " + hook->path + ": Permission denied");
+            hook->page->set_page_finished();
             file_to_search_in.close();
             continue;
         }
@@ -60,7 +58,7 @@ void Sleuth::search(void) noexcept
 
         if(m_is_to_show_filename)
         {
-            prefix = *hook;
+            prefix = hook->path;
             prefix += ":";
         }
 
@@ -73,11 +71,11 @@ void Sleuth::search(void) noexcept
                     line = std::string(prefix) + line;
                 }
 
-                page->add_line(std::cout, line);
+                hook->page->add_line(std::cout, line);
             }
         }
 
-        page->set_page_finished();
+        hook->page->set_page_finished();
         file_to_search_in.close();
     }
 }
@@ -87,12 +85,16 @@ void Sleuth::set_is_to_show_filename(bool is_to_show) noexcept
     m_is_to_show_filename = is_to_show;
 }
 
-void Sleuth::add_path(HookPtr path) noexcept
+void Sleuth::add_path(std::string& path) noexcept
 {
-    enqueue(path);
+    enqueue(Sleuth::HookPtr(new Hook {
+            .path = path,
+            .page = Book::PagePtr(m_book->add_page())
+        }
+    ));
 }
 
-void Sleuth::report_false_hook(std::string false_hook_directory_name) noexcept
+void Sleuth::report_false_hook(std::string& false_hook_directory_name) noexcept
 {
     auto page = m_book->add_page();
     page->add_line(std::cerr, "tinygrep: " + false_hook_directory_name + ": Permission denied");

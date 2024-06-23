@@ -8,12 +8,18 @@
 #include "book.hpp"
 #include "printer.hpp"
 
-template class BaseQueue<std::string>;
+struct Hook
+{
+    std::string path;
+    Book::PagePtr page;
+};
+
+template class BaseQueue<Hook>;
 
 /**
  * @brief Thread pool of searchers
  */
-class Sleuth : private BaseQueue<std::string>
+class Sleuth : private BaseQueue<Hook>
 {
     private:
 
@@ -58,7 +64,7 @@ class Sleuth : private BaseQueue<std::string>
          * @param num_threads number of threads
          */
         Sleuth(
-            std::string pattern,
+            std::string& pattern,
             size_t num_threads = std::thread::hardware_concurrency()
         );
 
@@ -73,9 +79,9 @@ class Sleuth : private BaseQueue<std::string>
          * 
          * @param path 
          */
-        void add_path(HookPtr path) noexcept;
+        void add_path(std::string& path) noexcept;
 
-        void report_false_hook(std::string false_hook_directory_name) noexcept;
+        void report_false_hook(std::string& false_hook_directory_name) noexcept;
 
         /**
          * @brief When there is no more hooks to investigate for clues ->

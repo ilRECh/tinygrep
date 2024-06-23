@@ -18,11 +18,13 @@ void TinyGrep::run(void) noexcept
 {
     m_path.iterate(
         Path::callback_func_t([this](const char * directory_name) {
-                m_sleuth.add_path(Sleuth::HookPtr(new std::string(directory_name)));
+                std::string path(directory_name);
+                m_sleuth.add_path(path);
             }
         ),
         Path::callback_func_t([this](const char * directory_name) {
-                m_sleuth.report_false_hook(directory_name);
+                std::string path(directory_name);
+                m_sleuth.report_false_hook(path);
             }
         )
     );
@@ -38,6 +40,31 @@ int TinyGrep::start(
     {
         TinyGrep grep(pattern, file_path);
         grep.run();
+    }
+    catch(std::regex_error &e)
+    {
+        switch(e.code())
+        {
+            case std::regex_constants::error_type::_S_error_escape:
+            {
+                std::cerr << "grep: Trailing backslash";
+                break;
+            }
+            case std::regex_constants::error_type::_S_error_brack:
+            {
+                std::cerr << "grep: Unmatched [, [^, [:, [., or [=";
+                break;
+            }
+            default:
+            {
+                std::cerr << "tinygrep: " << e.what();
+                break;
+            }
+        }
+
+        std::cerr << std::endl;
+
+        return EXIT_FAILURE + 1;
     }
     catch(std::exception &e)
     {
