@@ -1,51 +1,37 @@
 #include <iostream>
 
 #include "path.hpp"
+#include <filesystem>
 
-static const std::string CURRENT_DIRECTORY = ".";
-static const std::string PARENT_DIRECTORY = "..";
+namespace fs = std::filesystem;
 
-Path::Path(std::string file_path) noexcept : 
+Path::Path(std::string file_path) noexcept :
     m_starting_path(file_path)
 {}
 
 void Path::iterate_through_directories(const char * directory_path) noexcept
 {
-    DIR * directory = opendir(directory_path);
+    try
+    {
+        for(auto const& dirent : fs::directory_iterator(directory_path))
+        {
+            auto const &dirpath = dirent.path();
 
-    if(directory == NULL)
+            if(dirent.is_directory())
+            {
+                iterate_through_directories(dirpath.c_str());
+            }
+            else
+            {
+                m_handle_regular_file(dirpath.c_str());
+            }
+        }
+    }
+    catch(...)
     {
         m_handle_permission_denied(directory_path);
         return;
     }
-
-    struct dirent * dirent = readdir(directory);
-
-    while(dirent != NULL)
-    {
-        std::string full_path = std::string(directory_path);
-        if(*full_path.rbegin() != '/')
-        {
-            full_path += '/';
-        }
-        full_path += std::string(dirent->d_name);
-
-        if(
-            dirent->d_type == DT_DIR &&
-            dirent->d_name != CURRENT_DIRECTORY &&
-            dirent->d_name != PARENT_DIRECTORY
-        ) {
-            iterate_through_directories(full_path.c_str());
-        }
-        else if(dirent->d_type == DT_REG)
-        {
-            m_handle_regular_file(full_path.c_str());
-        }
-
-        dirent = readdir(directory);
-    }
-
-    closedir(directory);
 }
 
 void Path::iterate(
@@ -67,11 +53,8 @@ void Path::iterate(
 
 bool Path::get_is_starting_path_regfile(void) noexcept
 {
-    struct stat sb;
-
-    if(stat(m_starting_path.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+    if(!std::filesystem::is_directory(m_starting_path))
     {
-        // it is a regular file
         return true;
     }
 

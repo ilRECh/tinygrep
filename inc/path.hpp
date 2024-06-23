@@ -3,13 +3,6 @@
 #include <string>
 #include <functional>
 
-extern "C"
-{
-    #include <sys/stat.h>
-    #include <dirent.h>
-    #include <errno.h>
-}
-
 /**
  * @brief Contains the current Path information
  * 
