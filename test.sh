@@ -94,8 +94,8 @@ run_grep_test() {
 }
 
 # Files to store the results
-STANDARD_GREP_RESULTS="standard_grep_results.txt"
-TINYGREP_RESULTS="TINYGREP_results.txt"
+STANDARD_GREP_RESULTS="output_std_grep_results.txt"
+TINYGREP_RESULTS="output_tinygrep_results.txt"
 
 # Clear previous results
 > $STANDARD_GREP_RESULTS
@@ -123,13 +123,27 @@ done
 # Trying to valgrind if available
 echo "Trying valgrind."
 valgrind=$(which valgrind)
+VALGRIND_OUTPUT=output_valgrind.txt
+> $VALGRIND_OUTPUT
 
 if [ $? -eq 0 ]
 then
     echo "Valgrind found, testing."
-    $valgrind $TINYGREP "a" "Makefile" >> valgrind_output.txt
+
+    $valgrind $TINYGREP "a" "Makefile" &>> $VALGRIND_OUTPUT
+
+    no_leaks=$($TINYGREP "All heap blocks were freed -- no leaks are possible" $VALGRIND_OUTPUT | wc -l)
+
+    if [ $no_leaks -eq 1 ]
+    then
+        echo "Valgrind didn't find any leaks."
+    else
+        echo "Leaks found, Valgrind output:"
+        cat $VALGRIND_OUTPUT
+    fi
 else
     echo "Valgrind not found."
+    echo "Valgrind not found." &>> $VALGRIND_OUTPUT
 fi
 
 # Compare the results
@@ -155,5 +169,6 @@ chmod 700 $TEST_DIR/restricted_dir
 rm -rf $TEST_DIR
 
 echo "Test completed"
+echo "Find outputs in the $STANDARD_GREP_RESULTS, $TINYGREP_RESULTS and $VALGRIND_OUTPUT files."
 
 exit $exit_code
