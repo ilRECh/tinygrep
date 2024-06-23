@@ -122,7 +122,15 @@ done
 
 # Trying to valgrind if available
 echo "Trying valgrind."
-if [ $(which valgrind) ]
+valgrind=$(which valgrind)
+
+if [ $? -eq 0 ]
+then
+    echo "Valgrind found, testing."
+    $valgrind $TINYGREP "a" "Makefile" >> valgrind_output.txt
+else
+    echo "Valgrind not found."
+fi
 
 # Compare the results
 diff $STANDARD_GREP_RESULTS $TINYGREP_RESULTS > diff_results.txt
