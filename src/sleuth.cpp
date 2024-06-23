@@ -47,7 +47,7 @@ void Sleuth::search(void) noexcept
 
         if(!file_to_search_in.good())
         {
-            hook->page->add_line(std::cerr, "tinygrep: " + hook->path + ": Permission denied");
+            hook->page->add_line(std::cerr, "grep: " + hook->path + ": Permission denied");
             hook->page->set_page_finished();
             file_to_search_in.close();
             continue;
@@ -97,7 +97,7 @@ void Sleuth::add_path(std::string& path) noexcept
 void Sleuth::report_false_hook(std::string& false_hook_directory_name) noexcept
 {
     auto page = m_book->add_page();
-    page->add_line(std::cerr, "tinygrep: " + false_hook_directory_name + ": Permission denied");
+    page->add_line(std::cerr, "grep: " + false_hook_directory_name + ": Permission denied");
     page->set_page_finished();
 }
 
