@@ -6,13 +6,13 @@ A grep-like utility written in C++ that does a recursive search of a given query
 
 ## Reasoning
 
-The [Description](#Description) section describes the whole task in general. But if one tries to run the `grep` utility with only two arguments and no options, the `grep` ingnores directories:
+The [Description](#Description) section describes the whole task in general. But if one tries to run the `grep` utility with only two arguments and no options, the `grep` ignores directories:
 
 ```
 $> grep asdf ..      
 grep: ..: Is a directory
 ```
-It is necessary to provide `-r` option to do a recursive "grepping". Also, by default, the `grep` ignores binary files. The tasks enforces "all files" rule though, which means the option `--binary-files=text` is necessary as well.
+It is necessary to provide `-r` option to do a recursive "grepping". Also, by default, the `grep` ignores binary files. The tasks enforce the "all files" rule though, which means the option `--binary-files=text` is necessary as well.
 
 In conclusion, TINYGREP mimics the behavior of a
 ```
@@ -28,7 +28,7 @@ grep -r --binary-files=text '<pattern>' '<directory_or_file>'
     - std::list
 - CMake
 - Make
-- Linux (debian based)
+- Linux (Debian-based)
 
 ## Design
 - [Classes](#Classes)
@@ -47,7 +47,7 @@ grep -r --binary-files=text '<pattern>' '<directory_or_file>'
 The main class of the program.
 
 ### Path
-A class containing the directory iterator functionality. Uses the `std::funciton` for callbacks on discovery of the "regular" files / errors with the directory iteration.
+A class containing the directory iterator functionality. Uses the `std::funciton` for callbacks on the discovery of the "regular" files/errors with the directory iteration.
 
 ### Printer
 A class that has a `std::thread` for printing functionality. Uses the `Book` class as a document to print.
@@ -56,12 +56,12 @@ A class that has a `std::thread` for printing functionality. Uses the `Book` cla
 A class that searches the "hooks" for the "clues", then writes the results to the `Book` class.
 
 ### BaseQueue
-The thread-safe custom queue implementation made with the `std::list`. Uses the `std::mutex` with the `std::conditional_variable` to synchronize the queue access between threads using the queue.
+The thread-safe custom queue implementation is made with the `std::list`. Uses the `std::mutex` with the `std::conditional_variable` to synchronize the queue access between threads using the queue.
 
 ### Page
 
 #### Line struct
-A structure, which contains the information to print in the `std::string` format and the stream refrence to print that `string` to.
+A structure, which contains the information to print in the `std::string` format and the stream reference to print that `string` to.
 
 #### Page class
 A BaseQueue containing `Line` objects. Used by the `Sleuth` class to store the `std::string` results. Can be printed only through the `Book` object.
@@ -97,7 +97,7 @@ make
 ```
 
 ## Run tests
-It's only natural to test the project agains the real `grep` utility, specifically agains: `grep -r --binary-files=text` sh cmd.
+It's only natural to test the project against the real `grep` utility, specifically against: `grep -r --binary-files=text` sh cmd.
 
 Run the tests:
 ```
